@@ -1,4 +1,4 @@
-# 🎣 Deepsea Fishing - Interactive Pathfinding Game
+# 🐠 Deepsea Fishing - Interactive Pathfinding Game
 
 Welcome to **Deepsea Fishing**! This is a vanilla JavaScript web game that combines classic maze mechanics with pathfinding algorithms. Drop your lure into the randomly generated depths and navigate to the target fish, or watch the computer solve it automatically!
 

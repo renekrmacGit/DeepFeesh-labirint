@@ -81,12 +81,12 @@ function generateMaze() {
     grid[1][1] = 0;
 
     while(stack.length > 0) {
-        let current = stack[stack.length - 1];
+        let current = stack[stack.length - 1];//trenutna lokacija
         let directions = [[0, -2], [2, 0], [0, 2], [-2, 0]];
         
         for (let i = directions.length - 1; i > 0; i--) {
-            let j = Math.floor(Math.random() * (i + 1));
-            [directions[i], directions[j]] = [directions[j], directions[i]];
+            let j = Math.floor(Math.random() * (i + 1));// za random smer
+            [directions[i], directions[j]] = [directions[j], directions[i]];//premesa smeri med sabo
         }
 
         let carved = false; //ce se ni skopano
@@ -111,7 +111,7 @@ function generateMaze() {
     grid[target.y][target.x] = 0; 
 }
 
-// bfs algoritem da racunalnik sam najde najkrajso pot
+// bfs algoritem da racunalnik sam najde najkrajso pot v sirino
 function solveMaze() {
     let queue = [ [{ x: player.x, y: player.y }] ];
     let visited = Array.from({ length: rows }, () => Array(cols).fill(false));

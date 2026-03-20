@@ -1,7 +1,9 @@
+//elementi na strani
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const winScreen = document.getElementById('winScreen');
 
+// ribe in svg
 const fishSpecies = [
     { 
         name: "Yellowfin Tuna", minWeight: 20, maxWeight: 150, 
@@ -17,21 +19,25 @@ const fishSpecies = [
     }
 ];
 
+// slike za vabe
 const lureImages = [
     `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='l1' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='#ff4757'/><stop offset='50%' stop-color='#f1f2f6'/><stop offset='100%' stop-color='#a4b0be'/></linearGradient></defs><path d='M15,85 C40,105 85,55 85,15 C60,-5 5,45 15,85 Z' fill='url(#l1)' stroke='#57606f' stroke-width='1'/><path d='M85,15 Q95,0 95,20' fill='none' stroke='#2f3542' stroke-width='2'/><path d='M95,20 Q85,15 80,30' fill='none' stroke='silver' stroke-width='2'/><circle cx='75' cy='25' r='5' fill='#eccc68'/><circle cx='75' cy='25' r='2' fill='black'/></svg>`, 
     `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='l2' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='#1e90ff'/><stop offset='50%' stop-color='#dfe4ea'/><stop offset='100%' stop-color='#70a1ff'/></linearGradient></defs><path d='M10,90 L45,55 L85,15 L90,20 L50,60 L15,95 Z' fill='url(#l2)' stroke='#2f3542' stroke-width='1'/><path d='M85,15 L95,5' fill='none' stroke='silver' stroke-width='3'/><path d='M95,5 Q100,10 90,20' fill='none' stroke='#2f3542' stroke-width='2'/><circle cx='80' cy='25' r='3' fill='white'/><circle cx='80' cy='25' r='1.5' fill='black'/></svg>`
 ];
 
+// svg v tekst za slikl
 function createSafeImage(svgString) {
     let img = new Image();
     img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString);
     return img;
 }
 
+// spremenljivke za igro
 let currentLureImg;
 let targetFishImg;
 let currentFish = null; 
 
+// velikost mape
 const cols = 25; 
 const rows = 25;
 const cellSize = canvas.width / cols;
@@ -49,6 +55,7 @@ let elapsedTime = 0;
 
 let keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false, w: false, a: false, s: false, d: false };
 
+// poslusamo tipkovnico wsad puscice
 window.addEventListener('keydown', function(e) {
     if (keys.hasOwnProperty(e.key)) {
         keys[e.key] = true;
@@ -60,6 +67,7 @@ window.addEventListener('keyup', function(e) {
     if (keys.hasOwnProperty(e.key)) keys[e.key] = false;
 });
 
+// nardimo random labirint iskanjem v globino
 function generateMaze() {
     grid = [];
     for (let i = 0; i < rows; i++) {
@@ -81,28 +89,29 @@ function generateMaze() {
             [directions[i], directions[j]] = [directions[j], directions[i]];
         }
 
-        let carved = false;
-        for (let i = 0; i < directions.length; i++) {
-            let nx = current.x + directions[i][0];
-            let ny = current.y + directions[i][1];
+        let carved = false; //ce se ni skopano
+        for (let i = 0; i < directions.length; i++) { // zanka skozi smeri
+            let nx = current.x + directions[i][0];//nova x tarca
+            let ny = current.y + directions[i][1];//y tarca
 
-            if (ny > 0 && ny < rows - 1 && nx > 0 && nx < cols - 1) {
-                if (grid[ny][nx] === 1) {
-                    grid[current.y + directions[i][1] / 2][current.x + directions[i][0] / 2] = 0;
-                    grid[ny][nx] = 0;
-                    stack.push({x: nx, y: ny});
-                    carved = true;
+            if (ny > 0 && ny < rows - 1 && nx > 0 && nx < cols - 1) {//zunanje meje da ne gre ven
+                if (grid[ny][nx] === 1) {//gleda ce je zid
+                    grid[current.y + directions[i][1] / 2][current.x + directions[i][0] / 2] = 0;//podre umesni zid
+                    grid[ny][nx] = 0;//nova pot
+                    stack.push({x: nx, y: ny});//sklad, za lokacijo
+                    carved = true;//je skopano
                     break;
                 }
             }
         }
-        if (!carved) {
-            stack.pop();
+        if (!carved) {//ce je slepa ulica
+            stack.pop();//korak nazaj
         }
     }
     grid[target.y][target.x] = 0; 
 }
 
+// bfs algoritem da racunalnik sam najde najkrajso pot
 function solveMaze() {
     let queue = [ [{ x: player.x, y: player.y }] ];
     let visited = Array.from({ length: rows }, () => Array(cols).fill(false));
@@ -129,6 +138,7 @@ function solveMaze() {
     return [];
 }
 
+// zacetek nove igre (resetira pozicijo pa zbere random ribo)
 function startGame() {
     generateMaze();
     
@@ -152,6 +162,7 @@ function startGame() {
     document.getElementById('timeDisplay').innerText = "0.00";
 }
 
+// ko zmagas izracuna tezo in pokaze tist div za zmago
 function winGame() {
     isPlaying = false;
     document.getElementById('btnSolve').disabled = true;
@@ -169,6 +180,7 @@ function winGame() {
 let lastMoveTime = 0;
 let moveDelay = 80;
 
+// glavna zanka ki se skos vrti in rise stvari na zaslon
 function gameLoop() {
     let currentTime = Date.now();
 
@@ -198,11 +210,13 @@ function gameLoop() {
         }
     }
 
+    // tole nardi gladko premikanje (animacija da ne skace tko grdo)
     player.visualX += (player.x - player.visualX) * 0.35;
     player.visualY += (player.y - player.visualY) * 0.35;
 
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
+    // narisemo stene labirinta
     for (let i = 0; i < rows; i++) {
         for (let j = 0; j < cols; j++) {
             if (grid[i][j] === 1) {
@@ -236,9 +250,11 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 
+// gumbi za klikanje
 document.getElementById('btnNew').addEventListener('click', startGame);
 document.getElementById('btnPlayAgain').addEventListener('click', startGame);
 
+// avtomatsko resevanje ce se ti neda
 document.getElementById('btnSolve').addEventListener('click', function() {
     if (!isPlaying || isAutoSolving) return;
     if (startTime === 0) startTime = Date.now();
@@ -265,6 +281,6 @@ document.getElementById('btnSolve').addEventListener('click', function() {
     }, 70);
 });
 
-// Zagon
+// zagon na zacetku
 startGame();
 requestAnimationFrame(gameLoop);

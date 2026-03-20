@@ -286,14 +286,14 @@ startGame();
 requestAnimationFrame(gameLoop);
 
 // ester egg
-let input = "";
+let egg = "";
 
 window.addEventListener('keydown', function(e) {
-    input += e.key; // dodamo pritisnjeno črko
+    egg += e.key; // dodamo pritisnjeno črko
 
     // če to kar je napisal vsebuje tvoje ime, vržemo okence
-    if (input.includes("rene")) {
+    if (egg.includes("rene")) {
         alert("Made by: Rene Krmac 😎");
-        input = ""; // pobrišemo spomin, da lahko spet napiše
+        egg = ""; // pobrišemo spomin, da lahko spet napiše
     }
 });

@@ -1,9 +1,8 @@
-// poberemo elemente iz html-ja, da lahko po njih risemo
+//elementi iz html-ja
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const winScreen = document.getElementById('winScreen');
 
-// seznam vseh rib. vsaka ma ime, tezo in svojo sliko
 const fishSpecies = [
     { 
         name: "Yellowfin Tuna", minWeight: 20, maxWeight: 300, 
@@ -25,34 +24,33 @@ const lureImages = [
     `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='l2' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='#1e90ff'/><stop offset='50%' stop-color='#dfe4ea'/><stop offset='100%' stop-color='#70a1ff'/></linearGradient></defs><path d='M10,90 L45,55 L85,15 L90,20 L50,60 L15,95 Z' fill='url(#l2)' stroke='#2f3542' stroke-width='1'/><path d='M85,15 L95,5' fill='none' stroke='silver' stroke-width='3'/><path d='M95,5 Q100,10 90,20' fill='none' stroke='#2f3542' stroke-width='2'/><circle cx='80' cy='25' r='3' fill='white'/><circle cx='80' cy='25' r='1.5' fill='black'/></svg>`
 ];
 
-// funkcija ki pretvori svg tekst v pravo sliko, da jo canvas razume
+//svg v sliko
 function createSafeImage(svgString) {
     let img = new Image();
     img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svgString);
     return img;
 }
 
-// spremenljivke ki si zapomnijo trenutno izbrano vabo in ribo
+// spremenljivke za trenutne vabe in ribe
 let currentLureImg;
 let targetFishImg;
 let currentFish = null; 
 
-// nastavitve velikosti mape za labirint (25x25 kvadratkov)
+//velikost
 const cols = 25; 
 const rows = 25;
 const cellSize = canvas.width / cols;
 let grid = [];
 
-// pozicija igralca in cilja. visualx in visualy sta tuki za animacijo
+//pozicije igralca in visuals
 let player = { x: 1, y: 1, visualX: 1, visualY: 1 };
 let target = { x: cols - 2, y: rows - 2 }; 
 
-// stanje igre (a igramo, a se resuje samo in sled od vabe)
 let isPlaying = false;
 let isAutoSolving = false;
 let trail = []; 
 
-// spremenljivke za stoperico
+// spremenljivke za stoparico
 let startTime = 0;
 let elapsedTime = 0;
 
@@ -67,16 +65,16 @@ function generateMaze() {
         }
     }
 
-    // gremo na zacetek in ga oznacimo kot pot (0)
+    // gremo na zacetek in ga oznacimo kot pot
     let stack = [{x: 1, y: 1}];
     grid[1][1] = 0;
 
-    // kopljemo dokler sklad ni prazen
+    // kopljemo dokler stack ni prazen
     while(stack.length > 0) {
         let current = stack[stack.length - 1]; // vzamemo zadnjo lokacijo
         let directions = [[0, -2], [2, 0], [0, 2], [-2, 0]]; // preverjamo 2 polja naprej
         
-        // premesamo smeri, da labirint ni vedno isti
+        //da labirint ni vedno isti
         for (let i = directions.length - 1; i > 0; i--) {
             let j = Math.floor(Math.random() * (i + 1));
             [directions[i], directions[j]] = [directions[j], directions[i]];
